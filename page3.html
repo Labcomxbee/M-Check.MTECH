@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You Page</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href= "document_5591641.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+         @media (max-width: 768px) {
+          body {
+            font-size: 14px;
+          }
+        }
+        /* กำหนดพื้นหลังเคลื่อนไหว */
+        body {
+        
+            
+
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #00bcd4, #8e2de2, #4a00e0);
+            background-size: 600% 600%;
+            animation: gradientAnimation 10s ease infinite;
+        }
+
+        /* กำหนดข้อความให้ไปอยู่กลาง */
+        h1 {
+            color: white;
+            font-size: 3em;
+            text-align: center;
+            animation: fadeIn 2s ease-out;
+            font-family: "Pacifico", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        /* การเคลื่อนไหวของพื้นหลัง */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* การทำให้ข้อความค่อยๆ ปรากฏ */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Thank You.</h1>
+
+    <script>
+ 
+
+        // ตรวจสอบการรีเฟรชหน้าและทำการนำทางไปยังหน้าแรก
+        window.onload = function() {
+            if (performance.navigation.type == 1) {
+                // หากเป็นการรีเฟรชหน้า
+                window.location.href = 'index.html'; // เปลี่ยนไปที่หน้าแรก (index.html)
+            }
+        };
+
+        if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) => {
+        console.log("Service Worker registered with scope:", registration.scope);
+      })
+      .catch((error) => {
+        console.error("Service Worker registration failed:", error);
+      });
+  });
+}
+
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  // ป้องกันการแสดง Prompt เอง
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // แสดงปุ่มติดตั้งเอง
+  const installButton = document.getElementById("install-button");
+  installButton.style.display = "block";
+
+  installButton.addEventListener("click", () => {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      deferredPrompt = null;
+    });
+  });
+});
+
+    </script>
+</body>
+</html>

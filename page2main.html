@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Check : ระบบเช็คอิน</title>
+    <link rel="manifest" href="manifest.json">
+
+    <link rel="icon" href= "document_5591641.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+
+        @media (max-width: 768px) {
+          body {
+            font-size: 14px;
+          }
+        }
+
+        body {
+            font-family: "Kanit", serif;
+            font-weight: 600;
+            font-style: normal;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(200deg, #0023c0, #83008fc5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 20px;
+            
+        }
+
+        h3 {
+          color: #ffecec;
+          text-align: center;
+          font-size: 32px;
+          margin-top: 5px;
+        }
+        
+        .header {
+          font-family: "Pacifico", serif;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .form-section, .map-section, .camera-section {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 207, 207, 0.171);
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(191, 80, 255, 0.842);
+           
+            
+            
+        }
+
+        .form-section select {
+            text-align: center;
+            width: 80%;
+            margin-left: 10%;
+            margin-right: 10%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #000000;
+            border-radius: 5px;
+        }
+
+        .form-section .inputContainer {
+            text-align: center;
+            width: 75%;
+            margin-left: 10%;
+            margin-right: 10%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            
+            border-radius: 5px;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            color: white;
+        }
+
+       /* map button */
+       /* From Uiverse.io by Wendell47 */ 
+.btnmap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 30px;
+  border: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10rem;
+  transition: all 0.02s;
+  font-weight: bold;
+  cursor: pointer;
+  color: rgb(37, 37, 37);
+  z-index: 0;
+  box-shadow: 0 0px 7px -5px rgba(0, 0, 0, 0.5);
+}
+
+.btnmap:hover {
+  background: rgb(193, 228, 248);
+  color: rgb(33, 0, 85);
+}
+
+.btnmap:active {
+  transform: scale(0.97);
+}
+
+.hoverEffect {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.hoverEffect .mbtneff {
+  background: rgb(222, 0, 75);
+  background: linear-gradient(
+    90deg,
+    rgba(222, 0, 75, 1) 0%,
+    rgba(191, 70, 255, 1) 49%,
+    rgba(0, 212, 255, 1) 100%
+  );
+  border-radius: 40rem;
+  width: 10rem;
+  height: 10rem;
+  transition: 0.4s;
+  filter: blur(20px);
+  animation: effect infinite 3s linear;
+  opacity: 0.5;
+}
+
+.btnmap:hover .hoverEffect .mbtneff {
+  width: 8rem;
+  height: 8rem;
+}
+
+@keyframes effect {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+        
+       
+        
+        .map-container, .image-preview {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Popup Overlay */
+.popup {
+  display: none; /* ซ่อน Popup ไว้ก่อน */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* สีพื้นหลังโปร่งแสง */
+}
+
+/* Popup Content */
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s; /* เพิ่ม Animation */
+}
+
+/* ปุ่มปิด */
+#popupCloseButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#popupCloseButton:hover {
+  background-color: #45a049;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* แต่ง Btn */
+/* From Uiverse.io by vinodjangid07 */ 
+.Btn {
+  position: relative;
+  width: 150px;
+  height: 55px;
+  border-radius: 45px;
+  border: none;
+  background-color: rgb(151, 95, 255);
+  color: white;
+  box-shadow: 0px 10px 10px rgb(210, 187, 253) inset,
+  0px 5px 10px rgba(5, 5, 5, 0.212),
+  0px -10px 10px rgb(124, 54, 255) inset;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Btn::before {
+  width: 70%;
+  height: 2px;
+  position: absolute;
+  background-color: rgba(250, 250, 250, 0.678);
+  content: "";
+  filter: blur(1px);
+  top: 7px;
+  border-radius: 50%;
+}
+
+.Btn::after {
+  width: 70%;
+  height: 2px;
+  position: absolute;
+  background-color: rgba(250, 250, 250, 0.137);
+  content: "";
+  filter: blur(1px);
+  bottom: 7px;
+  border-radius: 50%;
+}
+
+.Btn:hover {
+  animation: jello-horizontal 0.9s both;
+}
+
+@keyframes jello-horizontal {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+
+  30% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+
+  40% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+
+  50% {
+    transform: scale3d(1.15, 0.85, 1);
+  }
+
+  65% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+
+  75% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/*00000000 */
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  
+}
+
+#userName  {
+  border: 2px solid rgb(255, 255, 255);
+  background-color: transparent;
+  border-radius: 10px;
+  padding: 12px 15px;
+  color: rgb(0, 0, 0);
+  font-weight: 500;
+  font-size: 16px;
+  outline: none;
+  caret-color: rgb(155, 78, 255);
+ 
+}
+
+
+
+
+
+.userIcon {
+  position: absolute;
+  fill: rgb(155, 78, 255);
+  width: 12px;
+  top: -10px;
+  left: -15px;
+  opacity: 0;
+  transition: .2s linear;
+}
+
+.usernameLabel {
+  position: absolute;
+  top: -12px;
+  left: 5px;
+  color: white;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: Whitney, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  transition: .2s linear;
+  opacity: 0;
+}
+
+#userName:focus ~ .usernameLabel,
+#userName:valid ~ .usernameLabel {
+  transform: translateX(20px);
+  opacity: 1;
+}
+
+#userName:focus ~ .userIcon,
+#userName:valid ~ .userIcon {
+  transform: translateX(20px);
+  opacity: 1;
+}
+
+#userName:focus,
+#userName:valid {
+  background-color: #ddd;
+  transition-duration: .3s;
+}
+
+
+/* DROPDOWN */
+/* คอนเทนเนอร์ */
+.selD {
+  position: relative;
+  margin-left: 5%;
+  max-width: 75%;
+  width: 300px;
+  animation: fadeInDrop 1s ease-in-out; /* Animation */
+}
+
+/* สไตล์ Dropdown */
+.selD select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 2px solid white;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2); /* โปร่งแสง */
+  color: white;
+  backdrop-filter: blur(8px); /* เบลอพื้นหลัง */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  appearance: none; /* ซ่อนลูกศรเริ่มต้น */
+  transition: all 0.3s ease; /* Animation สำหรับ Hover และ Focus */
+}
+
+/* เมื่อโฟกัส */
+.selD select:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
+  outline: none;
+  transform: scale(1.05); /* ขยายเล็กน้อย */
+}
+
+/* สร้างลูกศร Dropdown เอง */
+.selD::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid white; /* สีของลูกศร */
+  pointer-events: none;
+  transition: transform 0.3s ease; /* เพิ่ม Animation */
+}
+
+/* หมุนลูกศรเมื่อโฟกัส */
+.selD select:focus + .selD::after {
+  transform: translateY(-50%) rotate(180deg); /* หมุน 180 องศา */
+}
+
+
+/* Option สไตล์ */
+.selD select option {
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.8); /* พื้นหลังโปร่งแสง */
+  color: white;
+}
+
+/* เมื่อเลือก */
+.selD select option:checked {
+  background: rgba(95, 227, 250, 0.8);
+  color: rgb(0, 0, 0);
+}
+
+/* Animation สำหรับการปรากฏ */
+@keyframes fadeInDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+  
+
+    </style>
+</head>
+<body>
+
+    <div class="header">M-Check</div>
+
+    <!-- Popup Dialog -->
+<div id="popupDialog" class="popup">
+    <div class="popup-content">
+      <p id="popupMessage"></p>
+      <button id="popupCloseButton">ตกลง</button>
+    </div>
+  </div>
+  
+
+
+    <!-- Form Section -->
+    <div class="form-section">
+        
+        <h3>ข้อมูลของคุณ</h3>
+        <div class="inputContainer">
+            <input required="required" id="userName" placeholder="ชื่อ-นามสกุล" type="text">
+            <label class="usernameLabel" for="userName">ชื่อ-นามสกุล</label>
+            <svg viewBox="0 0 448 512" class="userIcon"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"></path></svg>
+        </div>
+        
+        <div class="selD">
+          <select id="userDepartment">
+            <option value="" disabled selected>เลือกแผนก</option>
+            <option value="การบัญชี">การบัญชี</option>
+            <option value="เทคโนโลยีธุรกิจดิจิทัล">เทคโนโลยีธุรกิจดิจิทัล</option>
+            <option value="ธุรกิจค้าปลีก">ธุรกิจค้าปลีก</option>
+            <option value="ช่างยนต์">ช่างยนต์</option>
+            <option value="ช่างไฟฟ้า">ช่างไฟฟ้า</option>
+            <option value="อิเล็กทรอนิกส์">อิเล็กทรอนิกส์</option>
+          </select>
+        </div>
+        
+        <div class="selD">
+          <select class="C1" id="userYear">
+            <option class="cc1" value="" disabled selected>ชั้นปี</option>
+            <option class="cc1" value="ปวช.1">ปวช.1</option>
+            <option class="cc1" value="ปวช.2">ปวช.2</option>
+            <option class="cc1" value="ปวช.3">ปวช.3</option>
+          </select>
+        </div>
+        
+       
+    </div>
+
+    <!-- Map Section -->
+    <div class="map-section">
+        <h3>ตำแหน่งของคุณ</h3>
+        
+        <button class="btnmap"  onclick="getLocation()">
+          กดเพื่อรับตำแหน่ง
+          <div class="hoverEffect">
+            <div class="mbtneff"></div>
+          </div>
+        </button>
+        
+
+        <div class="map-container" id="map">
+            <p>คุณอยู่ไหน?</p>
+        </div>
+    </div>
+
+    <!-- Camera Section -->
+    <div class="camera-section">
+        <h3>ภาพถ่ายของคุณ</h3>
+       
+
+        <button class="btnmap"  onclick="openCamera()">
+          กดเพื่อถ่ายภาพ
+          <div class="hoverEffect">
+            <div class="mbtneff"></div>
+          </div>
+        </button>
+
+        <div class="image-preview" id="imagePreview">
+            <p>โปรดถ่ายภาพ</p>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button class="btn submit-btn Btn" onclick="submitData()">Check in</button>
+
+    <script>
+        let currentLat = null;  // เปลี่ยนตัวแปรเป็น `currentLat` แทน `userLat`
+let currentLon = null;  // เปลี่ยนตัวแปรเป็น `currentLon` แทน `userLong`
+let base64Image = null;  // ตัวแปร base64Image ที่ใช้สำหรับเก็บรูปภาพ
+
+// Get current location
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            currentLat = position.coords.latitude;  // กำหนดค่าพิกัดละติจูด
+            currentLon = position.coords.longitude; // กำหนดค่าพิกัดลองจิจูด
+
+            const map = document.getElementById('map');
+            map.innerHTML = `
+                <iframe width="100%" height="100%"
+                        src="https://www.google.com/maps?q=${currentLat},${currentLon}&hl=es;z=14&output=embed">
+                </iframe>`;
+            alert("เจอที่อยู่ของคุณแล้ว");
+        }, function(error) {
+            alert("Error getting location: " + error.message);
+        });
+    } else {
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+// Open camera
+function openCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+        const video = document.createElement('video');
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        video.srcObject = stream;
+        video.play();
+
+        video.addEventListener('loadeddata', function() {
+            setTimeout(function() {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // เลือกฟอร์แมตที่ต้องการ
+                const imageFormat = 'image/jpeg';
+                base64Image = canvas.toDataURL(imageFormat, 1.0);  // เก็บข้อมูล base64 ของภาพ
+
+                const img = document.createElement('img');
+                img.src = base64Image;
+                img.style.maxWidth = '100%';
+                img.style.borderRadius = '10px';
+
+                document.getElementById('imagePreview').innerHTML = '';
+                document.getElementById('imagePreview').appendChild(img);
+
+                stream.getTracks().forEach(track => track.stop());
+            }, 1000);
+        });
+    })
+    .catch(function(error) {
+        alert("Error accessing camera: " + error.message);
+    });
+}
+
+function submitData() {
+  const userName = document.getElementById('userName').value;
+  const userDepartment = document.getElementById('userDepartment').value;
+  const userYear = document.getElementById('userYear').value;
+
+  // ตรวจสอบว่าข้อมูลทั้งหมดมีหรือไม่
+  if (!userName || !userDepartment || !userYear || !currentLat || !currentLon || !base64Image) {
+    showMessage("กรอกข้อมูลให้ครบ.", false);
+    return;
+  }
+
+  // ข้อมูลที่จะส่งไปยัง Google Apps Script
+  const data = {
+    userName: userName,
+    userDepartment: userDepartment,
+    userYear: userYear,
+    userLat: currentLat,
+    userLong: currentLon,
+    imageData: base64Image
+  };
+
+  // ส่งข้อมูลไปยัง Google Apps Script ผ่าน HTTP POST
+  fetch('https://script.google.com/macros/s/AKfycbyDDR5VBnX_SZtqK8VK1aee0gryAZ-2iJRMeSmNGmHTHy_d4Fy1Dr9Q8diQ5dE3aphW/exec', {
+    method: 'POST',
+    body: new URLSearchParams(data),
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        showMessage(data.message, true);
+      } else {
+        showMessage(data.message, false);
+      }
+    })
+    .catch(error => {
+      showMessage("Error sending data: " + error.message, false);
+    });
+}
+
+
+
+// ฟังก์ชันแสดงข้อความใน Popup
+// ฟังก์ชันแสดงข้อความใน Popup
+function showMessage(message, isSuccess) {
+  const popup = document.getElementById('popupDialog');
+  const popupMessage = document.getElementById('popupMessage');
+  const popupCloseButton = document.getElementById('popupCloseButton');
+
+  // ตั้งข้อความและสีตามสถานะสำเร็จหรือข้อผิดพลาด
+  popupMessage.textContent = message;
+  popupMessage.style.color = isSuccess ? "green" : "red";
+
+  // แสดง Popup
+  popup.style.display = "block";
+
+  // ปิด Popup และเปลี่ยนหน้าเมื่อคลิกปุ่ม "ตกลง"
+  popupCloseButton.onclick = () => {
+    popup.style.display = "none";
+    if (isSuccess) {
+      window.location.href = "page3.html"; // เปลี่ยนไปยังหน้าที่ 3
+    }
+  };
+
+  // ปิด Popup เมื่อคลิกพื้นที่นอก Popup
+  window.onclick = (event) => {
+    if (event.target === popup) {
+      popup.style.display = "none";
+    }
+  };
+}
+
+
+
+
+
+
+        // ฟังก์ชันในการบันทึกค่าที่กรอกลงใน localStorage
+function saveFormData() {
+    const userName = document.getElementById("userName").value;
+    const userDepartment = document.getElementById("userDepartment").value;
+    const userYear = document.getElementById("userYear").value;
+    
+    localStorage.setItem("userName", userName);
+    localStorage.setItem("userDepartment", userDepartment);
+    localStorage.setItem("userYear", userYear);
+}
+
+// ฟังก์ชันในการโหลดค่าจาก localStorage
+function loadFormData() {
+    const savedUserName = localStorage.getItem("userName");
+    const savedUserDepartment = localStorage.getItem("userDepartment");
+    const savedUserYear = localStorage.getItem("userYear");
+    
+    if (savedUserName) {
+        document.getElementById("userName").value = savedUserName;
+    }
+    if (savedUserDepartment) {
+        document.getElementById("userDepartment").value = savedUserDepartment;
+    }
+    if (savedUserYear) {
+        document.getElementById("userYear").value = savedUserYear;
+    }
+}
+
+// เรียกใช้ฟังก์ชัน loadFormData เมื่อโหลดหน้าเว็บ
+window.onload = function() {
+    loadFormData();
+};
+
+// เมื่อกรอกข้อมูลให้บันทึกข้อมูลทุกครั้ง
+document.getElementById("userName").addEventListener("input", saveFormData);
+document.getElementById("userDepartment").addEventListener("change", saveFormData);
+document.getElementById("userYear").addEventListener("change", saveFormData);
+        
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((registration) => {
+        console.log("Service Worker registered with scope:", registration.scope);
+      })
+      .catch((error) => {
+        console.error("Service Worker registration failed:", error);
+      });
+  });
+}
+
+let deferredPrompt;
+
+window.addEventListener("beforeinstallprompt", (e) => {
+  // ป้องกันการแสดง Prompt เอง
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // แสดงปุ่มติดตั้งเอง
+  const installButton = document.getElementById("install-button");
+  installButton.style.display = "block";
+
+  installButton.addEventListener("click", () => {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the A2HS prompt");
+      } else {
+        console.log("User dismissed the A2HS prompt");
+      }
+      deferredPrompt = null;
+    });
+  });
+});
+
+
+
+
+
+    </script>
+</body>
+</html>
